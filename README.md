@@ -37,15 +37,37 @@ Easiest way to get a coordinate: right-click the spot in Google Maps and click t
 
 ## The frame
 
-`assets/frame.png` is a placeholder bezel. Drop your own square PNG (transparent in
-the middle) at that path to replace it.
+`assets/frame.png` is the overlay the app loads; `assets/frame-source.png` is the
+original artwork it was generated from.
 
-If your frame's window doesn't reach the edge of the image, adjust one value at the
-top of `style.css` until the green circle sits exactly inside it:
+The app needs the frame's window to be **transparent**, and most exported artwork
+is opaque RGB — overlaid as-is it would hide the radar entirely. So there's a
+converter:
+
+```bash
+python3 tools/make-frame-transparent.py assets/frame-source.png assets/frame.png
+```
+
+It flood-fills the white outside the device and inside the window to transparent
+(leaving the artwork's own light colours intact), feathers the edge, crops away
+empty margins, then measures the window circle and prints the CSS to paste into
+`:root` in `style.css`:
 
 ```css
-:root { --radar-inset: 6%; }   /* raise for a thicker bezel */
+  --frame-aspect: 685 / 799;
+  --scope-size: 80.438%;   /* % of WIDTH on both axes, so it stays circular */
+  --scope-left: 10.584%;
+  --scope-top:  23.467%;
 ```
+
+That last bit matters because the window is **not** centred in the artwork — the
+knob on top pushes the circle down — so the scope has to be placed on the measured
+circle rather than inset symmetrically. The layout reads `--frame-aspect` at
+runtime, so a frame of any proportion works without touching the code.
+
+**To swap in different artwork:** drop it at `assets/frame-source.png`, re-run the
+command above, and paste the four values it prints into `style.css`. Stdlib Python
+only — nothing to install.
 
 ## Running it locally
 

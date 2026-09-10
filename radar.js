@@ -128,9 +128,18 @@ function formatDistance(m) {
 
 /** Largest square that fits the stage, then a DPR-correct canvas inside it. */
 function resize() {
-  const pad = 10;   // keep the bezel off the screen edges
-  const side = Math.max(120, Math.min(stage.clientWidth, stage.clientHeight) - pad);
-  radarBox.style.width = `${side}px`;
+  // Fit the artwork's own aspect ratio (read from CSS, so swapping the frame
+  // needs no code change) into the stage.
+  const [aw, ah] = getComputedStyle(document.documentElement)
+    .getPropertyValue('--frame-aspect').split('/').map(Number);
+  const aspect = (aw > 0 && ah > 0) ? aw / ah : 1;
+
+  const pad = 10;   // keep the frame off the screen edges
+  const width = Math.max(120, Math.min(
+    stage.clientWidth,
+    stage.clientHeight * aspect
+  ) - pad);
+  radarBox.style.width = `${width}px`;
 
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
   cssSize = scope.clientWidth;

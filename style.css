@@ -1,13 +1,21 @@
 /* --------------------------------------------------------------------------
    Dragon Radar — dark by design, no light-mode variant.
    --------------------------------------------------------------------------
-   --radar-inset: how far the canvas is pulled in from the edge of the frame
-   PNG. 0 means the frame's transparent window fills the whole square. If your
-   own frame.png has a thick bezel, raise this until the green circle sits
-   exactly inside the window (e.g. 8% or 12%).
+   The green scope is positioned onto the transparent window of the frame
+   artwork, which is NOT centred in it (the knob at the top pushes the circle
+   down). These values are measured from the PNG itself:
+
+       python3 tools/make-frame-transparent.py assets/frame-source.png assets/frame.png
+
+   which prints exactly what to paste in below. Re-run it whenever you swap
+   the artwork.
    -------------------------------------------------------------------------- */
 :root {
-  --radar-inset: 6%;
+  --frame-aspect: 685 / 799;
+  --scope-size: 80.438%;   /* % of WIDTH on both axes, so it stays circular */
+  --scope-left: 10.584%;
+  --scope-top:  23.467%;
+
   --ink: #7dffb2;
   --ink-dim: #3f8f66;
 }
@@ -48,24 +56,26 @@ body {
   justify-content: center;
 }
 
-/* Sized in JS (largest square that fits #stage) — keeps portrait and
-   landscape correct without fighting aspect-ratio reflow rules. */
+/* Sized in JS (largest box of the artwork's aspect that fits #stage) —
+   keeps portrait and landscape correct without fighting aspect-ratio
+   reflow rules. */
 #radar {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--frame-aspect);
 }
 
 #scope {
   position: absolute;
-  inset: var(--radar-inset);
-  width: calc(100% - 2 * var(--radar-inset));
-  height: calc(100% - 2 * var(--radar-inset));
+  left: var(--scope-left);
+  top: var(--scope-top);
+  width: var(--scope-size);
+  height: auto;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   display: block;
   background: #04150c;
-  box-shadow: 0 0 40px rgba(60, 255, 150, 0.14) inset,
-              0 0 22px rgba(40, 200, 120, 0.10);
+  box-shadow: 0 0 30px rgba(60, 255, 150, 0.16) inset;
 }
 
 #frame {
