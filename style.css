@@ -29,7 +29,7 @@
 
   /* Breathing room above and below the radar. The radar is sized around
      this, so changing it just moves the logo and button. */
-  --radar-gap: 20px;
+  --radar-gap: 60px;
 }
 
 * { box-sizing: border-box; }
@@ -175,6 +175,13 @@ body {
 }
 
 #hud-status.error { color: #ff8a6a; }
+
+/* On a very short viewport 60px top and bottom is a large slice of the
+   height, and it comes straight out of the scope — so tighten it there.
+   Anything taller keeps the full gap. */
+@media (max-height: 560px) {
+  :root { --radar-gap: 24px; }
+}
 
 /* Short landscape: every vertical pixel the chrome takes comes straight out
    of the scope, so give the logo's height back to the radar. */
