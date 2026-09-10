@@ -53,6 +53,24 @@ body {
            env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+/* ---- logo -------------------------------------------------------------- */
+
+#brand {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: max(8px, 1.5vh) 12px 2px;
+}
+
+/* The artwork has an opaque black background, so it would otherwise sit in a
+   visible black box. Screen blending drops black to nothing against the dark
+   page while leaving the letters untouched — no asset processing needed. */
+#brand img {
+  height: clamp(26px, 6.5vh, 54px);
+  width: auto;
+  mix-blend-mode: screen;
+}
+
 /* ---- radar ------------------------------------------------------------- */
 
 #stage {
@@ -151,8 +169,10 @@ body {
 
 #hud-status.error { color: #ff8a6a; }
 
-/* Landscape: sit the readout beside nothing — just keep the radar big. */
+/* Short landscape: every vertical pixel the chrome takes comes straight out
+   of the scope, so give the logo's height back to the radar. */
 @media (orientation: landscape) and (max-height: 520px) {
+  #brand { display: none; }
   #hud { padding-top: 2px; }
   #hud-target { font-size: 13px; }
 }

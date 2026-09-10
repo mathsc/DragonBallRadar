@@ -15,13 +15,15 @@
 /* ---- constants ---------------------------------------------------------- */
 
 const M_PER_DEG_LAT = 110540;                       // local flat-earth approx
-const ZOOM_LADDER = [50, 100, 250, 500, 1000, 2500]; // metres, radius of scope
+const ZOOM_LADDER = [50, 100, 250, 500, 1000, 2500, 10000]; // metres, scope radius
 const AUTO_PAD = 1.12;                              // 12% breathing room
 const AUTO_MIN_RANGE = 50;                          // don't zoom past this
 const FOUND_RADIUS = 15;                            // metres = "you're on it"
 
 // Grid spacing per ladder step, so the grid never turns to mush.
-const GRID_SPACING = { 50: 10, 100: 20, 250: 50, 500: 100, 1000: 200, 2500: 500 };
+const GRID_SPACING = {
+  50: 10, 100: 20, 250: 50, 500: 100, 1000: 200, 2500: 500, 10000: 2000,
+};
 
 // Used when targets.txt can't be fetched (e.g. file://) so the radar always
 // renders something rather than an empty scope.

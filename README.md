@@ -85,6 +85,17 @@ runtime, so a frame of any proportion works without touching the code.
 command above, and paste the four values it prints into `style.css`. Stdlib Python
 only — nothing to install.
 
+## The logo
+
+`assets/mbz.png` sits above the radar. Its artwork has an opaque black
+background, so the page renders it with `mix-blend-mode: screen` — black blends
+to nothing against the dark page while the letters come through untouched, which
+avoids having to cut an alpha channel into the file.
+
+To swap it, replace that file; the height is capped in `style.css` under
+`#brand img`. On short landscape screens the logo is hidden, because every pixel
+of height it takes comes straight out of the radar.
+
 ## Running it locally
 
 Geolocation needs a secure context, so opening `index.html` off the disk won't get a
