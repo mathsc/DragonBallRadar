@@ -1,0 +1,14 @@
+# Dragon Radar target list
+# ------------------------------------------------------------------
+# One target per line:   latitude, longitude, label
+# Lines starting with #, and blank lines, are ignored.
+# Labels are optional — "47.5596, 7.5886" alone works fine.
+#
+# Edit this file, push it (or edit it right in GitHub's web UI),
+# reload the page. No rebuild needed.
+# ------------------------------------------------------------------
+
+47.5596, 7.5886, Rathaus
+47.5479, 7.5901, Bahnhof SBB
+47.5613, 7.5828, Marktplatz
+47.5580, 7.5940, Munster

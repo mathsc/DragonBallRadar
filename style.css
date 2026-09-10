@@ -1,0 +1,140 @@
+/* --------------------------------------------------------------------------
+   Dragon Radar — dark by design, no light-mode variant.
+   --------------------------------------------------------------------------
+   --radar-inset: how far the canvas is pulled in from the edge of the frame
+   PNG. 0 means the frame's transparent window fills the whole square. If your
+   own frame.png has a thick bezel, raise this until the green circle sits
+   exactly inside the window (e.g. 8% or 12%).
+   -------------------------------------------------------------------------- */
+:root {
+  --radar-inset: 6%;
+  --ink: #7dffb2;
+  --ink-dim: #3f8f66;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #05100a;
+  color: var(--ink);
+  font: 500 14px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ---- radar ------------------------------------------------------------- */
+
+#stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sized in JS (largest square that fits #stage) — keeps portrait and
+   landscape correct without fighting aspect-ratio reflow rules. */
+#radar {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+#scope {
+  position: absolute;
+  inset: var(--radar-inset);
+  width: calc(100% - 2 * var(--radar-inset));
+  height: calc(100% - 2 * var(--radar-inset));
+  border-radius: 50%;
+  display: block;
+  background: #04150c;
+  box-shadow: 0 0 40px rgba(60, 255, 150, 0.14) inset,
+              0 0 22px rgba(40, 200, 120, 0.10);
+}
+
+#frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  object-fit: fill;
+  /* if the PNG is missing, show nothing rather than a broken-image icon */
+  color: transparent;
+}
+
+/* ---- zoom button ------------------------------------------------------- */
+
+#zoom {
+  position: absolute;
+  right: max(12px, 3vw);
+  bottom: max(12px, 3vw);
+  min-width: 84px;
+  min-height: 44px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #06150d;
+  background: linear-gradient(#9dffc6, #46c983);
+  border: 2px solid #041c10;
+  border-radius: 999px;
+  box-shadow: 0 3px 0 #04351e, 0 0 18px rgba(80, 255, 160, 0.35);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zoom:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #04351e, 0 0 12px rgba(80, 255, 160, 0.3);
+}
+
+/* ---- readout ----------------------------------------------------------- */
+
+#hud {
+  flex: 0 0 auto;
+  padding: 8px max(12px, 3vw) max(10px, 2vw);
+  text-align: center;
+  display: grid;
+  gap: 2px;
+}
+
+#hud-target {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffe14d;
+  text-shadow: 0 0 10px rgba(255, 216, 64, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#hud-status {
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.03em;
+}
+
+#hud-status.error { color: #ff8a6a; }
+
+/* Landscape: sit the readout beside nothing — just keep the radar big. */
+@media (orientation: landscape) and (max-height: 520px) {
+  #hud { padding-top: 2px; }
+  #hud-target { font-size: 13px; }
+}
