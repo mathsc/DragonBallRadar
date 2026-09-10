@@ -8,23 +8,39 @@ dependencies.
 
 ## Setting the treasure locations
 
-Edit **`targets.txt`**. One target per line, `#` starts a comment:
+Edit **`targets.txt`**. One target per line:
 
 ```
-# lat, lon, label
-47.5596, 7.5886, Rathaus
-47.5479, 7.5901, Bahnhof SBB
+lat, lon, label | description
 ```
 
-The label is optional. Malformed lines are skipped, so a typo in one row never
-blanks the radar. After pushing (or editing the file directly in GitHub's web UI),
-just reload the page — no rebuild.
+```
+47.5596, 7.5886, Rathaus | The red one you cannot miss.\nCount the arches.
+47.5479, 7.5901, Bahnhof SBB | Under the departure board.
+47.5613, 7.5828, Marktplatz
+47.5613, 7.5828
+```
+
+The **label** shows in the readout under the radar. The **description** appears
+when a player taps that dot, and is what you write the clue in. Both are optional,
+as the last two lines show.
+
+The description starts at the `|` rather than being a fourth comma-separated
+field, so labels are free to contain commas. Write `\n` inside a description to
+force a line break.
+
+Lines starting with `#`, and blank lines, are ignored. Malformed lines are skipped,
+so a typo in one row never blanks the radar. After pushing (or editing the file
+directly in GitHub's web UI), just reload the page — no rebuild.
 
 Easiest way to get a coordinate: right-click the spot in Google Maps and click the
 `lat, lon` pair at the top of the menu to copy it.
 
 ## How it behaves
 
+- **Tap a yellow dot** to see its name, its clue, and how far away it is — the
+  distance keeps counting down while the card is open. Tap the backdrop, press
+  Escape, or hit Close to dismiss it.
 - **Zoom** starts in **AUTO**, which sizes the radar so *every* target fits inside
   the circle, re-fitting as you walk. Tap the button to step through fixed ranges —
   50 m, 100 m, 250 m, 500 m, 1 km, 2.5 km — then back to AUTO.

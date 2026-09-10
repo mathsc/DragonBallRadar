@@ -26,8 +26,8 @@ const GRID_SPACING = { 50: 10, 100: 20, 250: 50, 500: 100, 1000: 200, 2500: 500 
 // Used when targets.txt can't be fetched (e.g. file://) so the radar always
 // renders something rather than an empty scope.
 const FALLBACK_TARGETS = [
-  { lat: 47.5596, lon: 7.5886, label: 'Rathaus' },
-  { lat: 47.5479, lon: 7.5901, label: 'Bahnhof SBB' },
+  { lat: 47.5596, lon: 7.5886, label: 'Rathaus', desc: '' },
+  { lat: 47.5479, lon: 7.5901, label: 'Bahnhof SBB', desc: '' },
 ];
 
 /* ---- state -------------------------------------------------------------- */
@@ -46,12 +46,28 @@ let zoomIndex = -1;         // -1 = AUTO, otherwise index into ZOOM_LADDER
 let currentRange = 500;     // metres, resolved each frame
 let status = { text: 'Waiting for GPS…', error: false };
 let cssSize = 0;            // logical px width/height of the canvas
+let hitAreas = [];          // where each dot landed this frame, for tapping
+let selected = null;        // target whose detail sheet is open
+
+const sheet = document.getElementById('sheet');
+const sheetName = document.getElementById('sheet-name');
+const sheetDesc = document.getElementById('sheet-desc');
+const sheetMeta = document.getElementById('sheet-meta');
+const sheetClose = document.getElementById('sheet-close');
 
 /* ---- target list -------------------------------------------------------- */
 
 /**
- * Parse the targets file. Malformed lines are skipped rather than thrown, so
- * one bad row on hunt day never blanks the whole radar.
+ * Parse the targets file:
+ *
+ *     lat, lon, label | description
+ *
+ * The description is optional and starts at the first "|", which is why it
+ * isn't just a fourth comma-separated field — labels are allowed to contain
+ * commas. Use \n inside a description for a line break.
+ *
+ * Malformed lines are skipped rather than thrown, so one bad row on hunt day
+ * never blanks the whole radar.
  */
 function parseTargets(text) {
   const out = [];
@@ -59,14 +75,21 @@ function parseTargets(text) {
     const line = raw.trim();
     if (!line || line.startsWith('#')) continue;
 
-    const parts = line.split(',');
+    const bar = line.indexOf('|');
+    const head = bar === -1 ? line : line.slice(0, bar);
+    const desc = bar === -1 ? '' : line.slice(bar + 1).trim().replace(/\\n/g, '\n');
+
+    const parts = head.split(',');
     const lat = parseFloat(parts[0]);
     const lon = parseFloat(parts[1]);
     if (!isFinite(lat) || !isFinite(lon)) continue;
     if (Math.abs(lat) > 90 || Math.abs(lon) > 180) continue;
 
     const label = parts.slice(2).join(',').trim();
-    out.push({ lat, lon, label: label || `${lat.toFixed(4)}, ${lon.toFixed(4)}` });
+    out.push({
+      lat, lon, desc,
+      label: label || `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
+    });
   }
   return out;
 }
@@ -207,6 +230,7 @@ function drawRings(cx, cy, radius) {
 
 function drawTargets(cx, cy, radius, range, t) {
   const scale = radius / range;
+  hitAreas = [];
 
   for (const target of targets) {
     const { east, north } = offsetMeters(target);
@@ -231,15 +255,30 @@ function drawTargets(cx, cy, radius, range, t) {
     const alpha = clamped ? 0.30 + 0.20 * blink : (found ? 1 : 0.55 + 0.45 * blink);
     const size = (clamped ? 3.5 : found ? 8 : 6) * (cssSize / 340);
 
+    const r = Math.max(2, size);
+    hitAreas.push({ target, x: cx + px, y: cy + py, r });
+
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.shadowColor = 'rgba(255, 214, 40, 0.95)';
     ctx.shadowBlur = (found ? 26 : 14) * (cssSize / 340);
     ctx.fillStyle = found ? '#fff6b0' : '#ffd426';
     ctx.beginPath();
-    ctx.arc(cx + px, cy + py, Math.max(2, size), 0, Math.PI * 2);
+    ctx.arc(cx + px, cy + py, r, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
+
+    // Ring the target whose details are open, so the sheet and the dot are
+    // visibly the same thing.
+    if (selected === target) {
+      ctx.save();
+      ctx.strokeStyle = '#fff6b0';
+      ctx.lineWidth = Math.max(1.5, 2 * (cssSize / 340));
+      ctx.beginPath();
+      ctx.arc(cx + px, cy + py, r + 6 * (cssSize / 340), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 }
 
@@ -328,7 +367,71 @@ function updateHud() {
 
   hudStatus.textContent = status.text;
   hudStatus.classList.toggle('error', status.error);
+
+  refreshSheetMeta();
 }
+
+/* ---- target detail sheet ------------------------------------------------ */
+
+function openSheet(target) {
+  selected = target;
+  sheetName.textContent = target.label;
+
+  const hasDesc = Boolean(target.desc);
+  sheetDesc.textContent = hasDesc ? target.desc : 'No description for this target.';
+  sheetDesc.classList.toggle('empty', !hasDesc);
+
+  refreshSheetMeta();
+  sheet.hidden = false;
+  sheetClose.focus();
+}
+
+function closeSheet() {
+  selected = null;
+  sheet.hidden = true;
+}
+
+/** Distance keeps ticking down while the sheet is open and you walk. */
+function refreshSheetMeta() {
+  if (!selected) return;
+  const coords = `${selected.lat.toFixed(5)}, ${selected.lon.toFixed(5)}`;
+  sheetMeta.innerHTML = me
+    ? `<b>${formatDistance(distanceTo(selected))}</b> away · ${coords}`
+    : `${coords} · waiting for GPS`;
+}
+
+/**
+ * Which dot did the player tap? Uses the positions recorded by the last
+ * frame, with a generous radius — dots are small and fingers are not.
+ */
+function targetAt(x, y) {
+  let best = null, bestDist = Infinity;
+  for (const hit of hitAreas) {
+    const d = Math.hypot(hit.x - x, hit.y - y);
+    const reach = Math.max(hit.r + 16, 22);
+    if (d <= reach && d < bestDist) { best = hit.target; bestDist = d; }
+  }
+  return best;
+}
+
+scope.addEventListener('click', (ev) => {
+  const rect = scope.getBoundingClientRect();
+  // Guard against the canvas being scaled by CSS relative to its drawing box.
+  const k = cssSize / (rect.width || cssSize);
+  const target = targetAt((ev.clientX - rect.left) * k, (ev.clientY - rect.top) * k);
+  if (target) openSheet(target);
+});
+
+sheetClose.addEventListener('click', closeSheet);
+
+// Tapping the dimmed backdrop closes; tapping the card itself must not.
+sheet.addEventListener('click', (ev) => {
+  if (ev.target === sheet) closeSheet();
+});
+
+window.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && !sheet.hidden) closeSheet();
+});
 
 /* ---- geolocation -------------------------------------------------------- */
 

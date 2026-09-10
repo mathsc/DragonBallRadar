@@ -1,14 +1,24 @@
 # Dragon Radar target list
 # ------------------------------------------------------------------
-# One target per line:   latitude, longitude, label
-# Lines starting with #, and blank lines, are ignored.
-# Labels are optional — "47.5596, 7.5886" alone works fine.
+# One target per line:
 #
-# Edit this file, push it (or edit it right in GitHub's web UI),
-# reload the page. No rebuild needed.
+#     lat, lon, label | description
+#
+# The label is what shows in the readout; the description appears when a
+# player taps the dot. Both are optional:
+#
+#     47.5596, 7.5886                       -> coordinates as the label
+#     47.5596, 7.5886, Rathaus              -> no description
+#     47.5596, 7.5886, Rathaus | Look up.   -> both
+#
+# The description starts at the "|", so labels may contain commas.
+# Write \n inside a description to force a line break.
+#
+# Lines starting with #, and blank lines, are ignored. Edit this file,
+# push it (or edit it right in GitHub's web UI), reload the page.
 # ------------------------------------------------------------------
 
-47.5596, 7.5886, Rathaus
-47.5479, 7.5901, Bahnhof SBB
-47.5613, 7.5828, Marktplatz
-47.5580, 7.5940, Munster
+47.5596, 7.5886, Rathaus | The red one you cannot miss.\nCount the arches, then look behind the third.
+47.5479, 7.5901, Bahnhof SBB | Under the departure board.\nAsk the person in the green cap.
+47.5613, 7.5828, Marktplatz | Behind the fountain, low down.
+47.5580, 7.5940, Munster | Ask for the tower key.

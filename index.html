@@ -13,17 +13,26 @@
 
 <main id="stage">
   <div id="radar">
-    <canvas id="scope"></canvas>
+    <canvas id="scope" aria-label="Radar. Tap a target for details."></canvas>
     <img id="frame" src="assets/frame.png" alt="">
   </div>
-
-  <button id="zoom" type="button" aria-live="polite">AUTO</button>
 </main>
 
 <footer id="hud">
+  <button id="zoom" type="button" aria-live="polite">AUTO</button>
   <div id="hud-target">&mdash;</div>
   <div id="hud-status">Waiting for GPS&hellip;</div>
 </footer>
+
+<!-- Target details, opened by tapping a dot. -->
+<div id="sheet" hidden>
+  <div id="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheet-name">
+    <h2 id="sheet-name"></h2>
+    <p id="sheet-desc"></p>
+    <div id="sheet-meta"></div>
+    <button id="sheet-close" type="button">Close</button>
+  </div>
+</div>
 
 <script src="radar.js"></script>
 </body>
