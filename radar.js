@@ -39,6 +39,8 @@ const ctx = scope.getContext('2d');
 const radarBox = document.getElementById('radar');
 const stage = document.getElementById('stage');
 const zoomBtn = document.getElementById('zoom');
+const brand = document.getElementById('brand');
+const hud = document.getElementById('hud');
 const hudTarget = document.getElementById('hud-target');
 const hudStatus = document.getElementById('hud-status');
 
@@ -154,16 +156,20 @@ function formatDistance(m) {
 /** Largest square that fits the stage, then a DPR-correct canvas inside it. */
 function resize() {
   // Fit the artwork's own aspect ratio (read from CSS, so swapping the frame
-  // needs no code change) into the stage.
+  // needs no code change) into the space the chrome leaves behind.
   const [aw, ah] = getComputedStyle(document.documentElement)
     .getPropertyValue('--frame-aspect').split('/').map(Number);
   const aspect = (aw > 0 && ah > 0) ? aw / ah : 1;
 
+  // Measured against the viewport rather than #stage, because #stage now
+  // takes its height from the radar — asking it would be circular.
+  const bodyStyle = getComputedStyle(document.body);
+  const padY = parseFloat(bodyStyle.paddingTop) + parseFloat(bodyStyle.paddingBottom);
+  const availH = document.body.clientHeight - padY
+                 - brand.offsetHeight - hud.offsetHeight;
+
   const pad = 10;   // keep the frame off the screen edges
-  const width = Math.max(120, Math.min(
-    stage.clientWidth,
-    stage.clientHeight * aspect
-  ) - pad);
+  const width = Math.max(120, Math.min(stage.clientWidth, availH * aspect) - pad);
   radarBox.style.width = `${width}px`;
 
   const dpr = Math.min(window.devicePixelRatio || 1, 3);

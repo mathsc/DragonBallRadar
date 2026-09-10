@@ -48,6 +48,7 @@ body {
   height: 100dvh;
   display: flex;
   flex-direction: column;
+  justify-content: center;   /* logo + radar + readout centre as one group */
   overflow: hidden;
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
            env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -59,7 +60,7 @@ body {
   flex: 0 0 auto;
   display: flex;
   justify-content: center;
-  padding: max(8px, 1.5vh) 12px 2px;
+  padding: 0 12px 4px;
 }
 
 /* The artwork has an opaque black background, so it would otherwise sit in a
@@ -73,9 +74,11 @@ body {
 
 /* ---- radar ------------------------------------------------------------- */
 
+/* Height comes from the radar itself (sized in JS), so there is no leftover
+   space to centre the radar within — that slack is what pushed the logo and
+   the zoom button away from it. */
 #stage {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
   position: relative;
   display: flex;
   align-items: center;
@@ -145,7 +148,7 @@ body {
 
 #hud {
   flex: 0 0 auto;
-  padding: 8px max(12px, 3vw) max(10px, 2vw);
+  padding: 4px max(12px, 3vw) 0;
   text-align: center;
   display: grid;
   gap: 2px;
