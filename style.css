@@ -26,6 +26,10 @@
   --ink: #7dffb2;
   --ink-dim: #3f8f66;
   --amber: #ffd426;        /* target yellow */
+
+  /* Breathing room above and below the radar. The radar is sized around
+     this, so changing it just moves the logo and button. */
+  --radar-gap: 20px;
 }
 
 * { box-sizing: border-box; }
@@ -60,7 +64,7 @@ body {
   flex: 0 0 auto;
   display: flex;
   justify-content: center;
-  padding: 0 12px 4px;
+  padding: 0 12px var(--radar-gap);
 }
 
 /* The artwork has an opaque black background, so it would otherwise sit in a
@@ -148,7 +152,7 @@ body {
 
 #hud {
   flex: 0 0 auto;
-  padding: 4px max(12px, 3vw) 0;
+  padding: var(--radar-gap) max(12px, 3vw) 0;
   text-align: center;
   display: grid;
   gap: 2px;
