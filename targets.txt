@@ -22,3 +22,4 @@
 47.5479, 7.5901, Bahnhof SBB | Under the departure board.\nAsk the person in the green cap.
 47.5613, 7.5828, Marktplatz | Behind the fountain, low down.
 47.5580, 7.5940, Munster | Ask for the tower key.
+47.5261, 7.5888, Test Location | Added this for testing.
