@@ -18,8 +18,9 @@
 # push it (or edit it right in GitHub's web UI), reload the page.
 # ------------------------------------------------------------------
 
-47.5596, 7.5886, Rathaus | The red one you cannot miss.\nCount the arches, then look behind the third.
+47.5630, 7.5870, No.1 | Astro Fries
 47.5479, 7.5901, Bahnhof SBB | Under the departure board.\nAsk the person in the green cap.
 47.5613, 7.5828, Marktplatz | Behind the fountain, low down.
 47.5580, 7.5940, Munster | Ask for the tower key.
-47.5261, 7.5888, Test Location | Added this for testing.
+47.5261, 7.5888, Test Location | Added this for 
+# 47.5467, 7.5901, No.7 | Ask the guy who serves
