@@ -18,11 +18,11 @@
 # push it (or edit it right in GitHub's web UI), reload the page.
 # ------------------------------------------------------------------
 
-47.5630, 7.5870, No.1 | Astro Fries
-47.5220, 7.6614, No.2 | The forrest awaits
-47.5179, 7.6617, No.3 | Keep hiking
-47.5214, 7.6580, No.4 | Riddle me this
-47.5214, 7.6584, No.5 | It's in the forrest dude
-47.5191, 7.6547, No.6 | Be smart
-47.5180, 7.6541, No.7 | Raid the castle
-# 47.5467, 7.5901, No.7 | Ask the guy who serves
+47.5630, 7.5870, No.1 | Astro Fries.
+47.5220, 7.6614, No.2 | The forrest awaits.
+47.5179, 7.6617, No.3 | Keep hiking.
+47.5214, 7.6580, No.4 | Riddle me this.
+47.5214, 7.6584, No.5 | It's in the forrest dude.
+47.5191, 7.6547, No.6 | Be smart.
+47.5180, 7.6541, No.7 | Raid the castle.
+# 47.5467, 7.5901, No.7 | Ask the guy who serves.
